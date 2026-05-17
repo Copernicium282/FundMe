@@ -1,4 +1,4 @@
-# <img src="logo.svg" alt="FundMe" height="40px">
+# FundMe
 
 [![Foundry Version](https://img.shields.io/badge/foundry-v0.2.0-blue.svg)](https://book.getfoundry.sh/)
 [![Solidity Version](https://img.shields.io/badge/solidity-^0.8.18-lightgrey.svg)](https://soliditylang.org/)
@@ -66,6 +66,8 @@ Start your local test blockchain (Anvil) with steps tracing and custom block tim
 make anvil
 ```
 
+#### Local Deployment & Interactions (Anvil)
+
 Deploy the contract locally to Anvil using the deployment script (uses the default Anvil key and local RPC URL defined in the Makefile):
 
 ```bash
@@ -75,13 +77,33 @@ make deploy
 Fund the contract using your interaction scripts:
 
 ```bash
-make fund SENDER_ADDRESS=<your_wallet_address>
+make fund
 ```
 
 Withdraw funds from the contract using the owner wallet:
 
 ```bash
-make withdraw SENDER_ADDRESS=<your_wallet_address>
+make withdraw
+```
+
+#### Testnet Deployment & Interactions (Sepolia)
+
+Deploy the contract to Sepolia, dynamically loading environment variables and verifying on Etherscan:
+
+```bash
+make deploy-sepolia
+```
+
+Fund the contract on Sepolia using the private key configured in your .env file:
+
+```bash
+make fund-sepolia
+```
+
+Withdraw funds from the contract on Sepolia using the owner wallet:
+
+```bash
+make withdraw-sepolia
 ```
 
 ## Learn More
