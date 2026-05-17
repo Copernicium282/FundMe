@@ -1,0 +1,11 @@
+Ethereum Sepolia Gas Usage Snapshot
+
+FundMeTest:testAddFunderToArray() (gas: 111088)
+FundMeTest:testFundFailIfBelowMin() (gas: 31272)
+FundMeTest:testFundedTrueIfAboveMin() (gas: 110970)
+FundMeTest:testMinVal() (gas: 5860)
+FundMeTest:testOnlyOwnerWithdraw() (gas: 112761)
+FundMeTest:testPriceFeedVersion() (gas: 16637)
+FundMeTest:testSenderIsOwner() (gas: 8109)
+FundMeTest:testWithdrawWithASingleFunderCheaper() (gas: 97398)
+FundMeTest:testWithdrawWithMultipleFundersCheaper() (gas: 488604)
