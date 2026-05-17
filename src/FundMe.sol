@@ -10,16 +10,16 @@ error FundMe__NotOwner();
 contract FundMe {
     using PriceConverter for uint256;
 
-    // We introduce a withdrawal epoch tracker. Instead of looping to reset everyone's balance to 0 (which costs O(N) gas and could get stuck), 
+    // We introduce a withdrawal epoch tracker. Instead of looping to reset everyone's balance to 0 (which costs O(N) gas and could get stuck),
     // we use a nested mapping. When the owner withdraws, we increment the epoch. This instantly resets everyone's balance to 0 in O(1) gas!
     uint256 private s_epoch;
     mapping(uint256 => mapping(address => uint256)) private s_epochToAddressToAmountFunded;
     address[] private s_funders;
 
-    // We make these variables immutable. Because they are only set in the constructor and never change, 
+    // We make these variables immutable. Because they are only set in the constructor and never change,
     // declaring them immutable stores their values in the contract bytecode instead of storage, saving massive gas!
     address private immutable i_owner;
-    uint256 public constant MINIMUM_USD = 5 * 10 ** 18; 
+    uint256 public constant MINIMUM_USD = 5 * 10 ** 18;
     AggregatorV3Interface private immutable i_PriceFeed;
 
     constructor(address PriceFeed) {
@@ -83,20 +83,16 @@ contract FundMe {
     }
 
     // view / pure functions (getters)
-    function getAddressToAmtFunded(
-        address fundingAddress
-    ) external view returns(uint) {
+    function getAddressToAmtFunded(address fundingAddress) external view returns (uint256) {
         // Retrieve the balance of the address corresponding to the active epoch
         return s_epochToAddressToAmountFunded[s_epoch][fundingAddress];
     }
 
-    function getFunder(
-        uint index
-    ) external view returns(address) {
+    function getFunder(uint256 index) external view returns (address) {
         return s_funders[index];
     }
 
-    function getOwner() external view returns(address) {
+    function getOwner() external view returns (address) {
         return i_owner;
     }
 }

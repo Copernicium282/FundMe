@@ -9,8 +9,8 @@ import {DeployFundMe} from "../../script/DeployFundMe.s.sol";
 contract FundMeTest is Test {
     FundMe fundme;
     address USER = makeAddr("Copernicium282");
-    uint INIT_BALANCE = 10 ether;
-    uint SEND_VAL = 1 ether;
+    uint256 INIT_BALANCE = 10 ether;
+    uint256 SEND_VAL = 1 ether;
 
     function setUp() external {
         // fundme = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
@@ -27,9 +27,9 @@ contract FundMeTest is Test {
         // assertEq(fundme.i_owner(), address(this)); // me owner of FundMeTest, which is owner of the fundme contract, so we check this
         assertEq(fundme.getOwner(), msg.sender); // now that we deploy using the script, it sets the owner to us instead of FundMeTest, so we can change back
     }
-    
+
     function testPriceFeedVersion() public view {
-        uint version = fundme.getVersion();
+        uint256 version = fundme.getVersion();
         assertEq(version, 4); // use --fork-url $SEPOLIA_RPC_URL as the contract for the interface is on sepolia chain, and forge runs a temp anvil chain instead if --fork-url is not used
         // note that this test only works on sepolia as the version on other chains may be different, such as 6 on eth mainnet
     }
@@ -41,13 +41,13 @@ contract FundMeTest is Test {
 
     modifier funded() {
         vm.prank(USER); // the next tx will be sent by user and not this contract
-        fundme.fund{ value: SEND_VAL }();
+        fundme.fund{value: SEND_VAL}();
         _;
     }
 
     function testFundedTrueIfAboveMin() public funded {
         // uint amtFunded = fundme.getAddressToAmtFunded(address(this)); // since we fund the contract in this code itself and not through a constructor, we need to use address(this) instead of msg.sender
-        uint amtFunded = fundme.getAddressToAmtFunded(USER); // we use vm.prank
+        uint256 amtFunded = fundme.getAddressToAmtFunded(USER); // we use vm.prank
 
         assertEq(amtFunded, SEND_VAL);
     }
@@ -58,7 +58,6 @@ contract FundMeTest is Test {
     }
 
     function testOnlyOwnerWithdraw() public funded {
-
         vm.expectRevert();
         vm.prank(USER); // this line is skipped
         fundme.cheaperWithdraw(); // reverted as the USER is not the owner
@@ -66,16 +65,16 @@ contract FundMeTest is Test {
 
     function testWithdrawWithASingleFunderCheaper() public funded {
         // Arrange
-        uint startingOwnerBal = fundme.getOwner().balance;
-        uint startingFundMeBal = address(fundme).balance;
+        uint256 startingOwnerBal = fundme.getOwner().balance;
+        uint256 startingFundMeBal = address(fundme).balance;
 
         // Act
         vm.prank(fundme.getOwner());
         fundme.cheaperWithdraw();
 
         // Revert
-        uint finalOwnerBal = fundme.getOwner().balance;
-        uint finalFundMeBal = address(fundme).balance;
+        uint256 finalOwnerBal = fundme.getOwner().balance;
+        uint256 finalFundMeBal = address(fundme).balance;
 
         assertEq(startingFundMeBal + startingOwnerBal, finalOwnerBal);
         assertEq(finalFundMeBal, 0);
@@ -86,12 +85,12 @@ contract FundMeTest is Test {
         uint160 numOfFunders = 10;
         uint160 initFunderIndex = 2;
         // uint GAS_PRICE = 1;
-        for(uint160 i=initFunderIndex; i<numOfFunders; i++){
+        for (uint160 i = initFunderIndex; i < numOfFunders; i++) {
             hoax(address(i), INIT_BALANCE);
-            fundme.fund{ value: SEND_VAL}();
+            fundme.fund{value: SEND_VAL}();
         }
-        uint startingOwnerBal = fundme.getOwner().balance;
-        uint startingFundMeBal = address(fundme).balance;
+        uint256 startingOwnerBal = fundme.getOwner().balance;
+        uint256 startingFundMeBal = address(fundme).balance;
 
         // Act
         // uint gasStart = gasleft();
@@ -106,8 +105,8 @@ contract FundMeTest is Test {
         // console.log(gasConsumed);
 
         // Revert
-        uint finalOwnerBal = fundme.getOwner().balance;
-        uint finalFundMeBal = address(fundme).balance;
+        uint256 finalOwnerBal = fundme.getOwner().balance;
+        uint256 finalFundMeBal = address(fundme).balance;
 
         assertEq(finalFundMeBal, 0);
         assertEq(startingFundMeBal + startingOwnerBal, finalOwnerBal);

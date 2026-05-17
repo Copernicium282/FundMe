@@ -9,8 +9,8 @@ import {FundFundMe, WithdrawFundMe} from "../../script/interactions.s.sol";
 contract InteractionTest is Test {
     FundMe fundme;
     address USER = makeAddr("Copernicium282");
-    uint INIT_BALANCE = 10 ether;
-    uint SEND_VAL = 1 ether;
+    uint256 INIT_BALANCE = 10 ether;
+    uint256 SEND_VAL = 1 ether;
 
     function setUp() external {
         DeployFundMe deploy = new DeployFundMe();
