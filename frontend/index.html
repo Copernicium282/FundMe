@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fund Me - Baseline Smart Contract</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet" />
+
+    <style>
+      /* Reset & Global Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        background-color: #030503;
+        background-image: radial-gradient(circle at center, #0a160c 0%, #030503 100%);
+        color: #ffffff;
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* Glow Orb Background Effect */
+      .glowing-orb {
+        position: absolute;
+        width: 700px;
+        height: 700px;
+        left: 50%;
+        top: 60%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      /* Globe Silhouette Arc at the bottom */
+      .globe-silhouette {
+        position: fixed;
+        width: 1400px;
+        height: 1400px;
+        left: 50%;
+        top: 62%;
+        transform: translateX(-50%);
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, rgba(3, 5, 3, 0.98) 75%);
+        border: 1px solid rgba(16, 185, 129, 0.12);
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      /* Glowing Data Columns */
+      .column-grid {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 24px;
+        width: 100%;
+        max-width: 1200px;
+        height: 25vh;
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0.35;
+      }
+      
+      .data-bar {
+        width: 80px;
+        background: linear-gradient(to top, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0) 100%);
+        border-radius: 6px 6px 0 0;
+        border-top: 1px solid rgba(16, 185, 129, 0.3);
+      }
+      .bar-1 { height: 8%; }
+      .bar-2 { height: 22%; }
+      .bar-3 { height: 40%; }
+      .bar-4 { height: 65%; }
+      .bar-5 { height: 90%; }
+      .bar-6 { height: 90%; }
+      .bar-7 { height: 65%; }
+      .bar-8 { height: 40%; }
+      .bar-9 { height: 22%; }
+      .bar-10 { height: 8%; }
+
+      /* Sleek Glassmorphic Header */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 40px;
+        background: rgba(3, 5, 3, 0.4);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        z-index: 10;
+      }
+
+      .header-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.8);
+        letter-spacing: 0.5px;
+      }
+
+      .btn-connect {
+        font-family: 'Outfit', sans-serif;
+        background: #10B981;
+        color: #030503;
+        border: none;
+        border-radius: 30px;
+        padding: 10px 24px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+      }
+
+      .btn-connect:hover {
+        background: #059669;
+        transform: translateY(-2px);
+        box-shadow: 0 0 30px rgba(16, 185, 129, 0.45);
+      }
+
+      /* Hero Content Wrapper */
+      .content-wrapper {
+        position: relative;
+        z-index: 5;
+        width: 100%;
+        max-width: 1000px;
+        padding: 100px 20px 120px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .oracle-label {
+        font-family: 'Outfit', sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        color: #10B981;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+
+      h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 56px;
+        font-weight: 800;
+        color: #ffffff;
+        text-align: center;
+        max-width: 800px;
+        line-height: 1.15;
+        letter-spacing: -1px;
+        margin-bottom: 16px;
+      }
+
+      .subtitle {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.55);
+        text-align: center;
+        max-width: 580px;
+        line-height: 1.6;
+        margin-bottom: 40px;
+      }
+
+      /* Sleek DApp Portal Interface */
+      .dapp-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-radius: 24px;
+        padding: 36px;
+        width: 100%;
+        max-width: 480px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      /* Balance Area */
+      .balance-section {
+        text-align: center;
+        margin-bottom: 28px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 24px;
+      }
+
+      .balance-lbl {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.4);
+        margin-bottom: 8px;
+      }
+
+      .balance-amount {
+        font-family: 'Outfit', sans-serif;
+        font-size: 40px;
+        font-weight: 800;
+        color: #ffffff;
+      }
+
+      .balance-currency {
+        font-size: 20px;
+        font-weight: 700;
+        color: #10B981;
+        margin-left: 2px;
+      }
+
+      /* Input Forms */
+      .form-group {
+        position: relative;
+        margin-bottom: 20px;
+      }
+
+      .eth-input {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 16px 20px;
+        color: #ffffff;
+        font-size: 16px;
+        font-family: 'Inter', sans-serif;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      .eth-input:focus {
+        border-color: #10B981;
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+      }
+
+      .eth-input::placeholder {
+        color: rgba(255, 255, 255, 0.25);
+      }
+
+      .input-token {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-weight: 700;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.4);
+      }
+
+      /* DApp Action Buttons */
+      .btn-fund {
+        width: 100%;
+        background: #10B981;
+        color: #030503;
+        border: none;
+        border-radius: 12px;
+        padding: 16px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2);
+        margin-bottom: 12px;
+      }
+
+      .btn-fund:hover:not(:disabled) {
+        background: #059669;
+        box-shadow: 0 6px 24px rgba(16, 185, 129, 0.35);
+      }
+
+      .btn-fund:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-withdraw {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+        border-radius: 12px;
+        padding: 16px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-withdraw:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .btn-withdraw:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      /* Premium Bottom Stats Bar */
+      .stats-footer {
+        position: fixed;
+        bottom: 40px;
+        left: 40px;
+        right: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .stat-columns {
+        display: flex;
+        gap: 60px;
+        pointer-events: auto;
+      }
+
+      .stat-box {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .stat-val {
+        font-family: 'Outfit', sans-serif;
+        font-size: 24px;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 4px;
+        letter-spacing: -0.5px;
+      }
+
+      .stat-lbl {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.4);
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+      }
+
+      .status-pulse {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #10B981;
+        margin-right: 8px;
+        box-shadow: 0 0 10px #10B981;
+        animation: pulseAnimation 2s infinite;
+      }
+
+      @keyframes pulseAnimation {
+        0% {
+          opacity: 0.3;
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+        70% {
+          opacity: 1;
+          box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+        }
+        100% {
+          opacity: 0.3;
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+      }
+
+      .footer-actions {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        pointer-events: auto;
+      }
+
+      .design-credit {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.2);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .design-credit:hover {
+        color: #10B981;
+      }
+
+      .btn-scroll {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-scroll:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.15);
+        transform: translateY(2px);
+      }
+
+      .scroll-arrow {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
+
+      /* Notification Container */
+      .toast-box {
+        position: fixed;
+        top: 100px;
+        right: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        z-index: 100;
+        pointer-events: none;
+      }
+
+      .toast-alert {
+        background: rgba(8, 10, 8, 0.85);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 12px;
+        padding: 16px 20px;
+        color: #ffffff;
+        font-size: 13px;
+        width: 300px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+        pointer-events: auto;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .toast-alert.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-title {
+        font-weight: 700;
+        color: #10B981;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 1px;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <!-- Background Effects -->
+    <div class="glowing-orb"></div>
+    <div class="globe-silhouette"></div>
+    <div class="column-grid">
+      <div class="data-bar bar-1"></div>
+      <div class="data-bar bar-2"></div>
+      <div class="data-bar bar-3"></div>
+      <div class="data-bar bar-4"></div>
+      <div class="data-bar bar-5"></div>
+      <div class="data-bar bar-6"></div>
+      <div class="data-bar bar-7"></div>
+      <div class="data-bar bar-8"></div>
+      <div class="data-bar bar-9"></div>
+      <div class="data-bar bar-10"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+      <div class="header-title">Fund Me, a Baseline Smart Contract Foundry Project</div>
+      <button class="btn-connect" id="connectButton">Connect Wallet</button>
+    </header>
+
+    <!-- Main Content Container -->
+    <div class="content-wrapper">
+      <div class="oracle-badge">Verified Chainlink Price Oracle</div>
+      <h1>Redefining the Future of Crowdfunding</h1>
+      <div class="subtitle">Access secure, decentralized smart contract funding powered by real-time Chainlink price feeds.</div>
+
+      <!-- Main DApp Card -->
+      <div class="dapp-card">
+        <div class="balance-section">
+          <div class="balance-lbl">Contract Balance</div>
+          <div class="balance-amount"><span id="balanceDisplay">0.00</span><span class="balance-currency">ETH</span></div>
+        </div>
+
+        <div class="form-group">
+          <input type="number" step="0.01" class="eth-input" id="ethAmount" placeholder="0.10" />
+          <span class="input-token">ETH</span>
+        </div>
+
+        <button class="btn-fund" id="fundButton">Fund Now</button>
+        <button class="btn-withdraw" id="withdrawButton" disabled>Withdraw Funds</button>
+      </div>
+    </div>
+
+    <!-- Bottom Metadata Bar -->
+    <div class="stats-footer">
+      <div class="stat-columns">
+        <div class="stat-box">
+          <div class="stat-val">5 USD</div>
+          <div class="stat-lbl">Minimum Deposit</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="totalFundedVal">0.00 ETH</div>
+          <div class="stat-lbl"><span class="status-pulse"></span>Contract Status</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">ORACLE</div>
+          <div class="stat-lbl">Chainlink ETH / USD</div>
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <a href="https://dribbble.com/shots/25821920-Prop-Trading-Firm" class="design-credit" target="_blank" rel="noopener noreferrer">Design inspired by Prop Trading Firm by JCTrader</a>
+        <button class="btn-scroll">
+          <svg class="scroll-arrow" viewBox="0 0 24 24">
+            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Toast Alert Notifications -->
+    <div class="toast-box">
+      <div class="toast-alert" id="toastAlert">
+        <div class="toast-title" id="toastTitle">System Status</div>
+        <div id="toastMessage">MetaMask wallet connection required.</div>
+      </div>
+    </div>
+
+    <!-- Logic Script Injection -->
+    <script src="./index.js" type="module"></script>
+  </body>
+</html>
