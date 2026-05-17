@@ -106,6 +106,23 @@ Withdraw funds from the contract on Sepolia using the owner wallet:
 make withdraw-sepolia
 ```
 
+### Frontend Integration & GitHub Pages Deployment
+
+This repository includes a premium, dark-green dApp interface inside the `frontend/` folder. You can serve this interface locally to interact with your contracts or host it publicly using platforms like GitHub Pages.
+
+> [!WARNING]
+> If you deploy the frontend folder to GitHub Pages (which serves assets over secure HTTPS), modern web browsers will automatically block MetaMask from communicating with a local Anvil node (which serves over HTTP on localhost) due to **Mixed Content Security Restrictions**. 
+>
+> For local Anvil node testing, always serve your frontend locally using a local development server (such as Python's HTTP server over HTTP). Use public GitHub Pages hosting exclusively for interacting with live testnets (like Sepolia) that query RPC nodes over secure HTTPS.
+
+To serve the frontend locally from your repository root:
+
+```bash
+# Serves the repository root so dynamic broadcast assets are accessible
+python3 -m http.server 3000
+```
+Open your browser and navigate to `http://localhost:3000/frontend/index.html`.
+
 ## Learn More
 
 The following topics will help guide you through the Cyfrin Updraft curriculum:
